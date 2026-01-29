@@ -1320,7 +1320,12 @@ export default function EditProductPage() {
           }
         },
       },
-      cancel: { label: "Cancel" },
+      cancel: {
+        label: "Cancel",
+        onClick: () => {
+          console.log("Toast cancelled");
+        },
+      },
     });
   };
 
