@@ -682,10 +682,22 @@ import {
 } from "recharts";
 import { formatCurrency, getOrderStatusColor, downloadCSV } from "@/lib/utils";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
 // 🔥 IMPORT NEW COMPONENTS
-import SalesHeatmap from "@/components/dashboard/SalesHeatmap";
-import InventoryForecast from "@/components/dashboard/InventoryForecast";
+const SalesHeatmap = dynamic(
+  () => import("@/components/dashboard/SalesHeatmap"),
+  {
+    ssr: false,
+  },
+);
+
+const InventoryForecast = dynamic(
+  () => import("@/components/dashboard/InventoryForecast"),
+  {
+    ssr: false,
+  },
+);
 
 // --- Styled Components / Utilities ---
 const glassCard =
@@ -703,11 +715,13 @@ export default function DashboardPage() {
   // UI States
   const [isLoading, setIsLoading] = useState(true);
   const [dateRange, setDateRange] = useState("30days");
+  const [hasMounted, setHasMounted] = useState(false);
 
   // Mock Target (Backend integration later)
   const MONTHLY_TARGET = 50000;
 
   useEffect(() => {
+    setHasMounted(true);
     fetchDashboardData();
   }, [dateRange]);
 
@@ -786,6 +800,10 @@ export default function DashboardPage() {
         </div>
       </div>
     );
+  }
+
+  if (!hasMounted) {
+    return <StatsSkeleton />;
   }
 
   return (
